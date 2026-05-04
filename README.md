@@ -75,7 +75,7 @@ That's all. Move on to [Enabling OSC in VRChat](#enabling-osc-in-vrchat).
 
 Use this if the installer fails, or if you prefer to do things yourself.
 
-**Step 1 - Download Avatar Scaler**
+**Step 1 — Download Avatar Scaler**
 
 [Download](https://github.com/SalbugVR/VRChat-Avatar-Scaler/releases) and unzip the VRChat Avatar Scaler folder somewhere convenient (e.g. your Documents folder).
 
