@@ -391,3 +391,4 @@ VRChat communicates via UDP using the OSC protocol. The scaler sends to port **9
 ## To-Do List
 
 - Integrate SteamVR Input to control avatar height with VR controller inputs.
+- Possibly integrate per-world ID scale saving.
