@@ -361,10 +361,6 @@ Something else on your PC is already using port 9001. Change the **Recv port** i
 - Make sure `pynput` is installed. Run `Install.bat` again to check.
 - If it still does not work, open Command Prompt and run: `pip install --upgrade pynput`
 
-### The scaler was launching itself on Windows startup
-
-This was caused by a startup folder shortcut, likely placed there manually following older instructions. Run **`Cleanup.bat`** to remove it automatically. Going forward, use the **Run on Windows startup** toggle in Settings to manage this cleanly.
-
 ### The height overlay appears when the wrong window is focused
 
 This should not occur in the current version, which identifies VRChat by process name rather than window title. If you do experience this, please open an issue on GitHub with details about which application was focused.
