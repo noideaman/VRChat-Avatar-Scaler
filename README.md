@@ -379,4 +379,4 @@ VRChat communicates via UDP using the OSC protocol. The scaler sends to port **9
 | `/avatar/eyeheightscalingallowed` | `bool` | Receive only | `false` when the current world has fully disabled avatar scaling. |
 | `/avatar/change` | `string` | Receive only | Broadcast by VRChat on every avatar switch and world transition. |
 
-Full VRChat OSC documentation: https://docs.vrchat.com/docs/osc-avatar-scaling
+[Full VRChat OSC documentation](https://docs.vrchat.com/docs/osc-overview)
