@@ -75,13 +75,17 @@ That's all. Move on to [Enabling OSC in VRChat](#enabling-osc-in-vrchat).
 
 Use this if the installer fails, or if you prefer to do things yourself.
 
-**Step 1 — Install Python**
+**Step 1 - Download Avatar Scaler**
+
+[Download](https://github.com/SalbugVR/VRChat-Avatar-Scaler/releases) and unzip the VRChat Avatar Scaler folder somewhere convenient (e.g. your Documents folder).
+
+**Step 2 — Install Python**
 
 Go to [python.org/downloads](https://www.python.org/downloads/) and download the latest Python 3 release.
 
 > ⚠️ **Important:** On the first screen of the Python installer, tick the checkbox that says **"Add Python to PATH"** before clicking Install Now. If you miss this, the app will not be able to find Python.
 
-**Step 2 — Install required packages**
+**Step 3 — Install required packages**
 
 Open **Command Prompt** or **PowerShell** (press `Win + R`, type `cmd`, press Enter) and paste:
 
@@ -95,7 +99,7 @@ Then for optional keyboard shortcut support (recommended):
 pip install pynput
 ```
 
-**Step 3 — Launch the app**
+**Step 4 — Launch the app**
 
 Double-click **`Launch Scaler (Silent).vbs`** to start without a console window appearing.
 
