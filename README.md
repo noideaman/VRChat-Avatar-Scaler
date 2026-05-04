@@ -333,7 +333,6 @@ A handy rule of thumb:
 | `vrchat_avatar_scaler.pyw` | The main application. |
 | `Install.bat` | One-click installer — run this first. |
 | `Launch Scaler (Silent).vbs` | Launches the app without a console window. Use this for daily use and shortcuts. |
-| `Cleanup.bat` | Removes any leftover startup entries from older versions. Run this if the app was launching itself unexpectedly. |
 | `README.md` | This file. |
 | `scaler_config.json` | Created automatically on first run. Stores all settings and your last-used height. Delete to reset to defaults. |
 
