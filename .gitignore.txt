@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyw~
+
+# Config (contains personal settings — users generate their own)
+scaler_config.json
+
+# Windows
+Thumbs.db
+Desktop.ini
