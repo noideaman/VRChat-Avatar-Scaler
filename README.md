@@ -347,7 +347,7 @@ A handy rule of thumb:
 3. Make sure no firewall is blocking local UDP traffic on port 9000.
 4. Check that nothing else is already using port 9000 (another OSC app, for example).
 
-### My scale resets every time I switch avatar or enter a world
+### My scale changes every time I switch avatar or enter a world
 
 Enable **Retain active height** in **Settings → On Avatar / World Change**. The scaler listens for the message VRChat sends on every avatar switch and world transition and re-sends your height immediately.
 
