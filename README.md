@@ -60,7 +60,7 @@ It also watches for avatar and world changes and can instantly restore your pref
 
 This is the easiest way, especially if you are not familiar with the command line.
 
-1. [Download](https://github.com/SalbugVR/VRChat-Avatar-Scaler/releases) and unzip the VRChat Avatar Scaler folder somewhere convenient (e.g. your Documents folder).
+1. [Download](https://github.com/SalbugVR/VRChat-Avatar-Scaler/releases) and unzip `vrchat_avatar_scaler.zip` somewhere convenient (e.g. your Documents folder).
 2. Double-click **`Install.bat`**.
 3. Follow the prompts. The installer will:
    - Check that Python is installed and up to date
@@ -79,7 +79,7 @@ Use this if the installer fails, or if you prefer to do things yourself.
 
 **Step 1 — Download Avatar Scaler**
 
-[Download](https://github.com/SalbugVR/VRChat-Avatar-Scaler/releases) and unzip the VRChat Avatar Scaler folder somewhere convenient (e.g. your Documents folder).
+[Download](https://github.com/SalbugVR/VRChat-Avatar-Scaler/releases) and unzip `vrchat_avatar_scaler.zip` somewhere convenient (e.g. your Documents folder).
 
 **Step 2 — Install Python**
 
