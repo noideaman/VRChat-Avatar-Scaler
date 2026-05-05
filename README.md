@@ -108,7 +108,7 @@ pip install "git+https://github.com/cyberkitsune/tinyoscquery.git" zeroconf requ
 
 **Step 4 — Launch the app**
 
-Double-click **`Launch Scaler (Silent).vbs`** to start without a console window appearing.
+Double-click **`Launch Scaler (Silent).vbs`** or **`vrchat_avatar_scaler.pyw`** to start.
 
 ---
 
