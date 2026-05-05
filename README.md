@@ -8,7 +8,7 @@ A Windows desktop application that lets you control your VRChat avatar's size in
 
 ---
 
-<img width="922" height="512" alt="pythonw_ek3Apdztp5" src="https://github.com/user-attachments/assets/ebb9dc52-e5a4-42f4-b541-6d81fc8782da" />
+<img width="922" height="512" alt="image" src="https://github.com/user-attachments/assets/b4651e5a-c89e-49fa-b4ca-64e100c4d8c0" />
 
 ---
 
