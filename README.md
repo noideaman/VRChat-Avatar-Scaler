@@ -48,6 +48,7 @@ It also watches for avatar and world changes and can instantly restore your pref
 | Windows 10 or 11 | Required for the system tray and overlay features |
 | Python 3.10 or newer | Free download from [python.org](https://www.python.org/downloads/) |
 | VRChat (PC version) | OSC must be enabled in-game — see below |
+| Git *(optional)* | Required for `Install.bat` to install OSCQuery support. Free download from [git-scm.com](https://git-scm.com/downloads) |
 
 > **Don't have Python?** The installer will detect this and offer to open the Python download page for you.
 
@@ -64,6 +65,7 @@ This is the easiest way, especially if you are not familiar with the command lin
 3. Follow the prompts. The installer will:
    - Check that Python is installed and up to date
    - Install all required packages automatically
+   - Install OSCQuery support if Git is available (see [Requirements](#requirements))
    - Create a shortcut on your desktop
 4. When it finishes, press **Y** to launch immediately.
 
@@ -97,6 +99,12 @@ Then for optional keyboard shortcut support (recommended):
 
 ```
 pip install pynput
+```
+
+Then for optional OSCQuery support (recommended — requires Git to be installed):
+
+```
+pip install "git+https://github.com/cyberkitsune/tinyoscquery.git" zeroconf requests
 ```
 
 **Step 4 — Launch the app**
@@ -186,6 +194,10 @@ Configure this in **Settings → On Avatar / World Change**.
 ### Keyboard shortcuts
 
 With the `pynput` package installed, you can adjust your scale from anywhere — even when the scaler window is hidden to the tray — using keyboard shortcuts.
+
+### OSCQuery
+
+With the `tinyoscquery` package installed, the scaler advertises itself on the local network using mDNS. VRChat detects it automatically and sends OSC messages to it without any fixed port configuration needed. This prevents conflicts with other OSC applications that may be listening on the same ports. When OSCQuery is active, VRChat will show a HUD notification that it has found the scaler. OSCQuery can be toggled in **Settings → Network**.
 
 See [Keyboard shortcuts](#keyboard-shortcuts) below for the full list and instructions on changing them.
 
@@ -305,15 +317,14 @@ Only one of these can be active at a time. If neither is enabled, VRChat's scale
 
 Configure whether keyboard shortcuts are enabled and change the key bindings for each action. See [Keyboard shortcuts](#keyboard-shortcuts) for details.
 
-### Network (Advanced)
-
-These should not need changing unless you have a non-standard VRChat setup.
+### Network
 
 | Setting | Default | Description |
 |---|---|---|
+| Use OSCQuery | Enabled | Advertises the scaler via mDNS so VRChat finds it automatically using any available ports. Requires the `tinyoscquery` package. Falls back to fixed ports below if unavailable or disabled. |
 | VRChat IP | 127.0.0.1 | IP address of the machine running VRChat. Leave as-is if VRChat is on the same PC. |
-| Send port | 9000 | Port the scaler sends OSC messages to. VRChat listens here by default. |
-| Recv port | 9001 | Port the scaler listens on. VRChat sends status updates here by default. |
+| Send port | 9000 | Fallback port the scaler sends OSC messages to when OSCQuery is disabled. |
+| Recv port | 9001 | Fallback port the scaler listens on when OSCQuery is disabled. |
 
 Settings are saved to `scaler_config.json` in the same folder as the script. You can delete this file to reset everything to defaults.
 
@@ -358,7 +369,7 @@ Enable **Retain active height** in **Settings → On Avatar / World Change**. Th
 
 ### "Port in use — receive disabled" in the status bar
 
-Something else on your PC is already using port 9001. Change the **Recv port** in **Settings → Network** to a different number (e.g. 9002). The Send port (9000) is rarely affected since other apps send to VRChat rather than listen.
+Something else on your PC is already using port 9001. The best fix is to enable **OSCQuery** in **Settings → Network** — it will pick a free port automatically. Alternatively, change the **Recv port** to a different number (e.g. 9002).
 
 ### Keyboard shortcuts are not working
 
@@ -374,7 +385,7 @@ This should not occur in the current version, which identifies VRChat by process
 
 ## OSC technical reference
 
-VRChat communicates via UDP using the OSC protocol. The scaler sends to port **9000** and receives on port **9001** by default.
+VRChat communicates via UDP using the OSC protocol. When OSCQuery is active, ports are negotiated automatically. When OSCQuery is disabled, the scaler sends to port **9000** and receives on port **9001** by default.
 
 | OSC Address | Type | Direction | Description |
 |---|---|---|---|
