@@ -121,8 +121,8 @@ OSC is the feature that lets external tools like this one talk to VRChat.
 2. Go to **Options → OSC → Enabled**.
 
 **Alternatively**
-1. Open Quick Menu
-2. Double-click settings tab (⚙️) at bottom-right of menu.
+1. Open Quick Menu with `Esc` key on keyboard or configured menu button on VR controllers.
+2. Double-click the settings tab (⚙️) at bottom-right of the menu to quickly open Main Menu settings.
 3. Click `🔍 Search all settings` in top-right corner of Main Menu and type `osc`
 4. Enable `OSC`
 
