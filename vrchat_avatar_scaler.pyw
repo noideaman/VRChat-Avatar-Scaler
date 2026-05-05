@@ -118,7 +118,7 @@ if _instance_lock is None:
 _atexit.register(_release_instance_lock)
 
 # ─── Standard imports ─────────────────────────────────────────────────────────
-import json, math, os, sys, threading, time
+import json, math, os, signal, sys, threading, time
 import ctypes as _ctypes
 
 from pathlib import Path
@@ -1523,6 +1523,8 @@ class ScalerApp:
         self._udon_max:  float | None  = None
         self._locked:    bool          = False
         self._svr_on:    bool          = False   # server started
+        self._closing:   bool          = False
+        self._vrc_monitor_running      = False
         self.tray:       pystray.Icon | None = None
         self._overlay:   HeightOverlay | None = None
 
@@ -1574,8 +1576,10 @@ class ScalerApp:
         self._osc_listen()
         self._vrc_monitor_start()
         self._instance_signal_start()
+        self._install_signal_handlers()
 
-        root.protocol("WM_DELETE_WINDOW", self._hide)
+        close_handler = self._quit if sys.platform.startswith("linux") else self._hide
+        root.protocol("WM_DELETE_WINDOW", close_handler)
         if self.cfg.get("start_minimized"):
             root.after(150, self._hide)
 
@@ -1902,25 +1906,55 @@ class ScalerApp:
 
         threading.Thread(target=listen, daemon=True).start()
 
+    def _install_signal_handlers(self):
+        def handle_signal(*_):
+            try:
+                self.root.after(0, self._quit)
+            except tk.TclError:
+                pass
+
+        for sig in (getattr(signal, "SIGINT", None), getattr(signal, "SIGTERM", None)):
+            if sig is None:
+                continue
+            try:
+                signal.signal(sig, handle_signal)
+            except (OSError, ValueError):
+                pass
+
     # ── Lifecycle ─────────────────────────────────────────────────────────────
     def _quit(self):
+        if self._closing:
+            return
+        self._closing = True
+        self._vrc_monitor_running = False
         self.cfg["last_height"] = self._h
         _save(self.cfg)
         self._kb_input.stop()
         self._oscq.stop()
         if self._overlay:
             self._overlay.destroy()
-        try: self.tray.stop()
-        except Exception: pass
+        if self.tray:
+            threading.Thread(target=self._stop_tray, daemon=True).start()
         _release_instance_lock()
-        self.root.destroy()
+        try:
+            self.root.quit()
+            self.root.destroy()
+        except tk.TclError:
+            pass
+
+    def _stop_tray(self):
+        try:
+            self.tray.stop()
+        except Exception:
+            pass
 
     # ── VRChat process monitor ────────────────────────────────────────────────
     def _vrc_monitor_start(self):
+        self._vrc_monitor_running = True
         threading.Thread(target=self._vrc_loop, daemon=True).start()
 
     def _vrc_loop(self):
-        while True:
+        while self._vrc_monitor_running:
             on = any(
                 "vrchat" in (p.info.get("name") or "").lower()
                 for p in psutil.process_iter(["name"])
@@ -1928,7 +1962,10 @@ class ScalerApp:
             )
             if on != self._vrc_on:
                 self._vrc_on = on
-                self.root.after(0, self._vrc_changed, on)
+                try:
+                    self.root.after(0, self._vrc_changed, on)
+                except tk.TclError:
+                    return
             time.sleep(3)
 
     def _vrc_changed(self, on: bool):
@@ -2163,8 +2200,13 @@ def main():
     sw, sh = root.winfo_screenwidth(), root.winfo_screenheight()
     root.geometry(f"+{(sw-w)//2}+{(sh-h)//2}")
 
-    root.mainloop()
-    _save(app.cfg)
+    try:
+        root.mainloop()
+    except KeyboardInterrupt:
+        app._quit()
+    finally:
+        _save(app.cfg)
+        _release_instance_lock()
 
 
 if __name__ == "__main__":
