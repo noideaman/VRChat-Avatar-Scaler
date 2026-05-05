@@ -87,14 +87,14 @@ call :ok "All packages installed successfully."
 :: ─── Optional packages ───────────────────────────────────────────────────────
 call :step "Installing optional packages..."
 echo.
-echo  Installing: pynput
-echo  (Enables global keyboard hotkeys. No administrator rights required.)
+echo  Installing: pynput  tinyoscquery  zeroconf  requests
+echo  (pynput: keyboard shortcuts  /  tinyoscquery: automatic port negotiation)
 echo  Errors here are non-fatal — core features will still work.
 echo.
 
-python -m pip install pynput
+python -m pip install pynput tinyoscquery zeroconf requests
 if errorlevel 1 (
-    call :warn "Optional packages could not be installed — skipping."
+    call :warn "Some optional packages could not be installed — skipping."
 ) else (
     call :ok "Optional packages installed."
 )
