@@ -87,16 +87,31 @@ call :ok "All packages installed successfully."
 :: ─── Optional packages ───────────────────────────────────────────────────────
 call :step "Installing optional packages..."
 echo.
-echo  Installing: pynput  tinyoscquery  zeroconf  requests
-echo  (pynput: keyboard shortcuts  /  tinyoscquery: automatic port negotiation)
-echo  Errors here are non-fatal — core features will still work.
+echo  Installing: pynput
+echo  (Keyboard shortcuts — no administrator rights required.)
 echo.
 
-python -m pip install pynput tinyoscquery zeroconf requests
+python -m pip install pynput
 if errorlevel 1 (
-    call :warn "Some optional packages could not be installed — skipping."
+    call :warn "pynput could not be installed — keyboard shortcuts will be unavailable."
 ) else (
-    call :ok "Optional packages installed."
+    call :ok "pynput installed."
+)
+
+echo.
+echo  Installing: tinyoscquery  zeroconf  requests
+echo  (OSCQuery — automatic port negotiation with VRChat.)
+echo  Note: tinyoscquery is installed directly from GitHub. Git must be installed.
+echo.
+
+python -m pip install "git+https://github.com/cyberkitsune/tinyoscquery.git" zeroconf requests
+if errorlevel 1 (
+    call :warn "tinyoscquery could not be installed — OSCQuery will be unavailable."
+    echo.
+    echo  If Git is not installed, get it from: https://git-scm.com/downloads
+    echo  Then re-run this installer.
+) else (
+    call :ok "tinyoscquery installed."
 )
 
 :: ─── Verify the main script exists ──────────────────────────────────────────

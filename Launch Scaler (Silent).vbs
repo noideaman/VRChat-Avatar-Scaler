@@ -1,8 +1,4 @@
-Set FSO      = CreateObject("Scripting.FileSystemObject")
 Set WshShell = CreateObject("WScript.Shell")
-
+Set FSO = CreateObject("Scripting.FileSystemObject")
 scriptDir = FSO.GetParentFolderName(WScript.ScriptFullName)
-target    = scriptDir & "\vrchat_avatar_scaler.pyw"
-
-' Launch pythonw silently (no console window, no UAC prompt needed).
-WshShell.Run "pythonw """ & target & """", 0, False
+WshShell.Run "pythonw """ & scriptDir & "\vrchat_avatar_scaler.pyw""", 0, False

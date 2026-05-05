@@ -10,6 +10,7 @@ Required (pip install):
 Optional (pip install):
     pynput               — enables global keyboard hotkeys (no administrator rights required)
     tinyoscquery zeroconf requests — enables OSCQuery for automatic port negotiation with VRChat
+                                     (install via: pip install git+https://github.com/cyberkitsune/tinyoscquery.git zeroconf requests)
 
 VRChat OSC ports (defaults):
     Send  →  9000   (VRChat listens here)
@@ -1141,7 +1142,8 @@ class Settings:
         if not _OSCQ:
             oscq_cb.config(state="disabled")
             tk.Label(s5,
-                     text="  ⚠ 'tinyoscquery' not installed — run Install.bat to set it up",
+                     text="  ⚠ 'tinyoscquery' not installed — run Install.bat to set it up\n"
+                          "     (requires Git: https://git-scm.com/downloads)",
                      font=FS, bg=BG, fg=WARN).pack(anchor="w", pady=(0, 6))
         else:
             tk.Label(s5,
