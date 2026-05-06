@@ -103,7 +103,7 @@ pip install pynput
 Then for optional OSCQuery support (recommended — requires Git to be installed):
 
 ```
-pip install "git+https://github.com/cyberkitsune/tinyoscquery.git" zeroconf requests
+pip install "git+https://github.com/Hackebein/tinyoscquery.git" zeroconf requests
 ```
 
 **Step 4 — Launch the app**
@@ -199,6 +199,8 @@ See [Keyboard shortcuts](#keyboard-shortcuts) below for the full list and instru
 ### OSCQuery
 
 With the `tinyoscquery` package installed, the scaler advertises itself on the local network using mDNS. VRChat detects it automatically and sends OSC messages to it without any fixed port configuration needed. This prevents conflicts with other OSC applications that may be listening on the same ports. When OSCQuery is active, VRChat will show a HUD notification that it has found the scaler. OSCQuery can be toggled in **Settings → Network**.
+
+> **Note:** The installer uses [Hackebein's fork of tinyoscquery](https://github.com/Hackebein/tinyoscquery), which includes a fix for processes not closing cleanly on Windows. This fork is a drop-in replacement for the original.
 
 ### Height overlay
 
