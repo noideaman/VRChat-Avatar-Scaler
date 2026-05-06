@@ -98,10 +98,16 @@ if _instance_lock is None:
 # ─── Standard imports ─────────────────────────────────────────────────────────
 import json, math, os, sys, threading, time
 import ctypes as _ctypes
+import urllib.request as _urllib
 
 from pathlib import Path
 import tkinter as tk
 from tkinter import ttk
+
+# ─── Version ──────────────────────────────────────────────────────────────────
+APP_VERSION       = "0.2.3"
+_RELEASES_API_URL = "https://api.github.com/repos/SalbugVR/VRChat-Avatar-Scaler/releases/latest"
+_RELEASES_PAGE    = "https://github.com/SalbugVR/VRChat-Avatar-Scaler/releases"
 
 # ─── Config ───────────────────────────────────────────────────────────────────
 _CFG = Path(__file__).with_name("scaler_config.json")
@@ -143,6 +149,25 @@ def _load() -> dict:
 def _save(cfg: dict):
     try: _CFG.write_text(json.dumps(cfg, indent=2), "utf-8")
     except Exception: pass
+
+
+def _fetch_latest_version() -> str | None:
+    """
+    Query GitHub releases API for the latest release tag.
+    Returns the tag string (e.g. 'v0.3.0') or None on any failure.
+    Runs in a background thread — never blocks the UI.
+    """
+    try:
+        req = _urllib.Request(
+            _RELEASES_API_URL,
+            headers={"User-Agent": f"VRChatAvatarScaler/{APP_VERSION}",
+                     "Accept":     "application/vnd.github+json"}
+        )
+        with _urllib.urlopen(req, timeout=8) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            return data.get("tag_name")
+    except Exception:
+        return None
 
 
 # ─── Windows startup shortcut management ─────────────────────────────────────
@@ -1379,12 +1404,28 @@ class HeightOverlay:
 
     def _drag_move(self, e):
         if self._win:
-            self._win.geometry(f"+{e.x_root - self._drag_ox}+{e.y_root - self._drag_oy}")
+            x = e.x_root - self._drag_ox
+            y = e.y_root - self._drag_oy
+            x, y = self._clamped(x, y)
+            self._win.geometry(f"+{x}+{y}")
 
     def _drag_end(self, e):
         if self._win:
-            self._cfg["overlay_x"] = self._win.winfo_x()
-            self._cfg["overlay_y"] = self._win.winfo_y()
+            x, y = self._clamped(self._win.winfo_x(), self._win.winfo_y())
+            self._win.geometry(f"+{x}+{y}")
+            self._cfg["overlay_x"] = x
+            self._cfg["overlay_y"] = y
+
+    def _clamped(self, x: int, y: int) -> tuple[int, int]:
+        """Clamp overlay position so it stays fully within the screen bounds."""
+        self._win.update_idletasks()
+        sw = self._root.winfo_screenwidth()
+        sh = self._root.winfo_screenheight()
+        ww = self._win.winfo_width()
+        wh = self._win.winfo_height()
+        x  = _clamp(x, 0, max(0, sw - ww))
+        y  = _clamp(y, 0, max(0, sh - wh))
+        return int(x), int(y)
 
     # ── focus poll ────────────────────────────────────────────────────────────
 
@@ -1576,6 +1617,7 @@ class ScalerApp:
         # Start input handlers and overlay after main loop is ready
         root.after(300, self._start_inputs)
         root.after(400, self._start_overlay)
+        root.after(5000, self._start_update_check)   # delay so startup feels snappy
 
     # ── Build UI ──────────────────────────────────────────────────────────────
     def _build(self):
@@ -1610,8 +1652,24 @@ class ScalerApp:
                 "The overlay is only visible when VRChat is the active window.\n"
                 "Drag it to reposition; click ✕ on the overlay to hide it.", wrap=280)
 
+        # ── Update notification banner (hidden until an update is found) ───
+        self._update_bar = tk.Frame(self.root, bg="#1a2a1a")
+        # Not packed yet — shown only when update is available
+        ub_inner = tk.Frame(self._update_bar, bg="#1a2a1a")
+        ub_inner.pack(padx=12, pady=5, fill="x")
+        self._update_lbl = tk.Label(ub_inner,
+            text="", font=FS, bg="#1a2a1a", fg=OK, cursor="hand2")
+        self._update_lbl.pack(side="left")
+        self._update_lbl.bind("<Button-1>", lambda _: self._open_releases())
+        tk.Button(ub_inner, text="✕", font=FS,
+                  bg="#1a2a1a", fg=DIM, relief="flat",
+                  activebackground="#1a2a1a", activeforeground=TEXT,
+                  cursor="hand2",
+                  command=self._dismiss_update_bar).pack(side="right")
+
         # ── VRChat status bar (full width) ────────────────────────────────
         vf = tk.Frame(self.root, bg=BG2)
+        self._vrc_frame = vf
         vf.pack(fill="x")
         vf.configure(highlightbackground=BG3, highlightthickness=1)
         vi = tk.Frame(vf, bg=BG2)
@@ -1820,6 +1878,40 @@ class ScalerApp:
     def _start_overlay(self):
         self._overlay = HeightOverlay(self.root, self.cfg)
         self._update_overlay_btn()
+
+    # ── Update check ──────────────────────────────────────────────────────────
+
+    def _start_update_check(self):
+        threading.Thread(target=self._run_update_check, daemon=True).start()
+
+    def _run_update_check(self):
+        tag = _fetch_latest_version()
+        if not tag:
+            return
+        # Normalise — strip leading 'v' for comparison
+        latest = tag.lstrip("v").strip()
+        current = APP_VERSION.lstrip("v").strip()
+        if latest != current:
+            try:
+                from packaging.version import Version
+                is_newer = Version(latest) > Version(current)
+            except Exception:
+                # packaging not available — simple string compare
+                is_newer = latest != current
+            if is_newer:
+                self.root.after(0, lambda: self._show_update_banner(tag))
+
+    def _show_update_banner(self, tag: str):
+        self._update_lbl.config(
+            text=f"🔔  Version {tag} is available — click here to download")
+        self._update_bar.pack(fill="x", before=self._vrc_frame)
+
+    def _dismiss_update_bar(self):
+        self._update_bar.pack_forget()
+
+    def _open_releases(self):
+        import webbrowser
+        webbrowser.open(_RELEASES_PAGE)
 
     def _toggle_overlay(self):
         if self._overlay:
