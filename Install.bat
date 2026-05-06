@@ -102,9 +102,10 @@ echo.
 echo  Installing: tinyoscquery  zeroconf  requests
 echo  (OSCQuery — automatic port negotiation with VRChat.)
 echo  Note: tinyoscquery is installed directly from GitHub. Git must be installed.
+echo  Using Hackebein's fork which includes a fix for clean process exit on Windows.
 echo.
 
-python -m pip install "git+https://github.com/cyberkitsune/tinyoscquery.git" zeroconf requests
+python -m pip install "git+https://github.com/Hackebein/tinyoscquery.git" zeroconf requests
 if errorlevel 1 (
     call :warn "tinyoscquery could not be installed — OSCQuery will be unavailable."
     echo.
