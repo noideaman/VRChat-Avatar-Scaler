@@ -39,6 +39,11 @@ if errorlevel 1 (
     goto :open_python_site
 )
 
+:: Identify the exact python.exe being used so all pip installs go to the right place
+for /f "tokens=*" %%p in ('python -c "import sys; print(sys.executable)"') do set "PYTHON_EXE=%%p"
+echo.
+echo  Using Python at: !PYTHON_EXE!
+
 :: Check version is at least 3.10
 for /f "tokens=2 delims= " %%v in ('python --version 2^>^&1') do set "PYVER=%%v"
 for /f "tokens=1,2 delims=." %%a in ("!PYVER!") do (
@@ -59,7 +64,7 @@ call :ok "Found Python !PYVER!"
 
 :: ─── Upgrade pip silently ────────────────────────────────────────────────────
 call :step "Updating pip..."
-python -m pip install --upgrade pip --quiet
+"!PYTHON_EXE!" -m pip install --upgrade pip --quiet
 if errorlevel 1 (
     call :warn "Could not upgrade pip — continuing anyway."
 ) else (
@@ -72,7 +77,7 @@ echo.
 echo  Installing: python-osc  pystray  Pillow  psutil
 echo.
 
-python -m pip install python-osc pystray Pillow psutil
+"!PYTHON_EXE!" -m pip install python-osc pystray Pillow psutil
 if errorlevel 1 (
     call :fail "One or more packages failed to install."
     echo.
@@ -91,7 +96,7 @@ echo  Installing: pynput
 echo  (Keyboard shortcuts — no administrator rights required.)
 echo.
 
-python -m pip install pynput
+"!PYTHON_EXE!" -m pip install pynput
 if errorlevel 1 (
     call :warn "pynput could not be installed — keyboard shortcuts will be unavailable."
 ) else (
@@ -105,7 +110,7 @@ echo  Note: tinyoscquery is installed directly from GitHub. Git must be installe
 echo  Using Hackebein's fork which includes a fix for clean process exit on Windows.
 echo.
 
-python -m pip install "git+https://github.com/Hackebein/tinyoscquery.git" zeroconf requests
+"!PYTHON_EXE!" -m pip install "git+https://github.com/Hackebein/tinyoscquery.git" zeroconf requests
 if errorlevel 1 (
     call :warn "tinyoscquery could not be installed — OSCQuery will be unavailable."
     echo.
@@ -202,6 +207,7 @@ echo     Action Menu ^> Options ^> OSC ^> Enabled
 echo.
 echo ════════════════════════════════════════════════════════════════════════════
 echo.
+pause
 set /p "LAUNCH= Launch VRChat Avatar Scaler now? (Y/N): "
 if /i "!LAUNCH!"=="Y" (
     cscript //nologo "%LAUNCHER%" >nul 2>&1
@@ -245,6 +251,8 @@ pause
 goto :eof
 
 :done_fail
+echo.
+echo  Installation did not complete successfully. See errors above.
 echo.
 pause
 goto :eof
