@@ -2034,19 +2034,22 @@ class ScalerApp:
 
         # ════ RIGHT PANEL ════════════════════════════════════════════════
 
-        tk.Label(RIGHT, text="Presets", font=FH, bg=BG, fg=TEXT).pack(anchor="w")
-        pf = tk.Frame(RIGHT, bg=BG); pf.pack(fill="x", pady=4)
+        self._builtin_preset_hdr = tk.Label(RIGHT, text="Presets", font=FH, bg=BG, fg=TEXT)
+        self._builtin_preset_hdr.pack(anchor="w")
+        self._builtin_preset_frame = tk.Frame(RIGHT, bg=BG)
+        self._builtin_preset_frame.pack(fill="x", pady=4)
         for i, (label, h) in enumerate(PRESETS):
-            b = tk.Button(pf, text=label,
+            b = tk.Button(self._builtin_preset_frame, text=label,
                           command=lambda h=h: self._set(h),
                           font=("Segoe UI", 9), bg=BG3, fg=TEXT,
                           activebackground=A, activeforeground=TEXT,
                           relief="flat", padx=6, pady=5, width=9, cursor="hand2")
             b.grid(row=i//4, column=i%4, padx=2, pady=2, sticky="ew")
             Tooltip(b, f"Set eye height to {h:.2f} m  ({_imp(h)}).")
-        for c in range(4): pf.columnconfigure(c, weight=1)
+        for c in range(4): self._builtin_preset_frame.columnconfigure(c, weight=1)
 
-        tk.Frame(RIGHT, bg=A2, height=1).pack(fill="x", pady=(10,6))
+        self._builtin_sep = tk.Frame(RIGHT, bg=A2, height=1)
+        self._builtin_sep.pack(fill="x", pady=(10,6))
 
         # ── Custom presets ────────────────────────────────────────────────
         cust_hdr = tk.Frame(RIGHT, bg=BG); cust_hdr.pack(fill="x")
@@ -2470,11 +2473,22 @@ class ScalerApp:
     # ── Custom presets ────────────────────────────────────────────────────────
 
     def _rebuild_custom_presets(self):
-        """Clear and redraw the custom presets grid from cfg['custom_presets']."""
+        """Clear and redraw the custom presets grid from cfg['custom_presets'].
+        Hides built-in presets while any custom presets exist."""
         for w in self._custom_frame.winfo_children():
             w.destroy()
 
         presets: list[dict] = self.cfg.get("custom_presets", [])
+
+        # Hide built-in presets when custom presets are defined; restore them when not
+        if presets:
+            self._builtin_preset_hdr.pack_forget()
+            self._builtin_preset_frame.pack_forget()
+            self._builtin_sep.pack_forget()
+        else:
+            self._builtin_preset_hdr.pack(anchor="w", before=self._builtin_preset_frame)
+            self._builtin_preset_frame.pack(fill="x", pady=4, before=self._builtin_sep)
+            self._builtin_sep.pack(fill="x", pady=(10, 6))
 
         if not presets:
             tk.Label(self._custom_frame,
