@@ -61,15 +61,13 @@ jobs:
       - name: Build with CX_Freeze (Linux)
         if: runner.os == 'Linux'
         run: |
-          python setup.py bdist_appimage \
-            vrchat_avatar_scaler.py
+          python setup.py bdist_appimage
         
       - name: Build with CX_Freeze (Windows)
         if: runner.os == 'Windows'
         shell: cmd
         run: |
-          python setup.py bdist_msi ^
-            vrchat_avatar_scaler.py
+          python setup.py bdist_msi
 
       # --- Upload ---
       - name: Upload binary
