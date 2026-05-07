@@ -49,12 +49,12 @@ jobs:
           pip install cx_Freeze freeze-core
 
       # --- Rename ---
-      - name: Build with CX_Freeze (Linux)
+      - name: Rename File so CX_Freeze works (Linux)
         if: runner.os == 'Linux'
         run: |
           mv vrchat_avatar_scaler.pyw vrchat_avatar_scaler.py
         
-      - name: Build with CX_Freeze (Windows)
+      - name: Rename File so CX_Freeze works (Windows)
         if: runner.os == 'Windows'
         shell: cmd
         run: |
