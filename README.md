@@ -31,12 +31,13 @@ It also watches for avatar and world changes and can instantly restore your pref
 - [Enabling OSC in VRChat](#enabling-osc-in-vrchat)
 - [Features](#features)
 - [Keyboard shortcuts](#keyboard-shortcuts)
+- [Quick height input](#quick-height-input)
+- [Custom presets](#custom-presets)
 - [Height overlay](#height-overlay)
 - [Settings reference](#settings-reference)
 - [Files included](#files-included)
 - [Troubleshooting](#troubleshooting)
 - [OSC technical reference](#osc-technical-reference)
-- [To-Do List](#to-do-list)
 
 ---
 
@@ -55,7 +56,18 @@ It also watches for avatar and world changes and can instantly restore your pref
 
 ## Installation
 
-### Option A — Quick install (recommended)
+### Option A — Windows installer or Linux AppImage (no Python required)
+
+Pre-built installers are available on the [releases page](https://github.com/SalbugVR/VRChat-Avatar-Scaler/releases) — no Python installation needed.
+
+- **Windows** — download `VRChat.Avatar.Scaler-x.x.x-win64.msi`, run it, and follow the prompts. It installs to your user profile and adds Start Menu and Desktop shortcuts.
+- **Linux** — download the `.AppImage`, mark it executable (`chmod +x`), and run it directly.
+
+> **Known limitation (MSI):** The Windows MSI build may leave a background process after closing. Use Task Manager to end it if needed.
+
+---
+
+### Option B — Quick install from source (recommended if you prefer Python)
 
 This is the easiest way, especially if you are not familiar with the command line.
 
@@ -72,7 +84,7 @@ That's all. Move on to [Enabling OSC in VRChat](#enabling-osc-in-vrchat).
 
 ---
 
-### Option B — Manual install
+### Option C — Manual install
 
 Use this if the installer fails, or if you prefer to do things yourself.
 
@@ -202,6 +214,18 @@ With the `pynput` package installed, you can adjust your scale from anywhere —
 
 See [Keyboard shortcuts](#keyboard-shortcuts) below for the full list and instructions on changing them.
 
+### Quick height input
+
+Press `Ctrl + Alt + I` (rebindable) while VRChat is focused to open a small floating input box. Type a height and press Enter to apply it instantly, without opening the main window. See [Quick height input](#quick-height-input) for details.
+
+### Custom presets
+
+Add your own named presets at any height. When custom presets exist, they replace the built-in presets in the right panel. See [Custom presets](#custom-presets) for details.
+
+### Automatic update notifications
+
+The scaler silently checks the GitHub releases page shortly after launch. If a newer version is available, a notification banner appears at the top of the window with a link to the releases page.
+
 ### OSCQuery
 
 With the `tinyoscquery` package installed, the scaler advertises itself on the local network using mDNS. VRChat detects it automatically and sends OSC messages to it without any fixed port configuration needed. This prevents conflicts with other OSC applications that may be listening on the same ports. When OSCQuery is active, VRChat will show a HUD notification that it has found the scaler. OSCQuery can be toggled in **Settings → Network**.
@@ -249,6 +273,7 @@ Requires the `pynput` package (installed automatically by `Install.bat`).
 | Scale up +10% | `Ctrl + Alt + Shift + ↑` |
 | Scale down −10% | `Ctrl + Alt + Shift + ↓` |
 | Apply default height | `Ctrl + Alt + Home` |
+| Quick height input | `Ctrl + Alt + I` |
 
 **Holding** a scale shortcut scales continuously — it fires immediately, pauses briefly, then repeats rapidly until you let go. This lets you make both fine adjustments and large sweeping changes with the same key.
 
@@ -260,6 +285,40 @@ Requires the `pynput` package (installed automatically by `Install.bat`).
 4. The label updates immediately to show the new binding.
 5. Click **Reset** next to any action to restore its factory default.
 6. Click **Save Settings** to apply.
+
+---
+
+## Quick height input
+
+Press `Ctrl + Alt + I` while VRChat is focused to open a small floating input box near the top of the screen. The current height is pre-filled and selected — start typing immediately to replace it.
+
+- **Enter** — applies the value and closes.
+- **Escape** or clicking away — closes without applying.
+
+### Accepted formats
+
+| Input | Interpreted as |
+|---|---|
+| `1.65` or `1.65m` | 1.65 metres |
+| `5'5"` or `5'5` | 5 feet 5 inches |
+| `5ft5in` | 5 feet 5 inches |
+| `65in` or `65"` | 65 inches |
+
+The binding is fully rebindable in **Settings → Controls**.
+
+---
+
+## Custom presets
+
+The Custom Presets section lives in the right panel, below the built-in presets. When any custom presets exist, the built-in presets are hidden — they return automatically if all custom presets are deleted.
+
+### Adding a preset
+
+Click the **＋** button in the Custom Presets header. Enter a name and a height (same formats as Quick height input), then click Save.
+
+### Editing and deleting
+
+Right-click any custom preset button to see **✏ Edit** and **🗑 Delete**. Deleting asks for confirmation first.
 
 ---
 
@@ -277,7 +336,7 @@ The overlay **only appears when VRChat is the active (focused) window**. It hide
 
 ### Moving it
 
-Click and drag anywhere on the overlay to move it. Its position is saved automatically and remembered between sessions. By default it appears in the top-right corner of your screen.
+Click and drag anywhere on the overlay to move it. It is clamped to the screen boundaries so it cannot be dragged off-screen, making it easy to snap precisely into any corner. Its position is saved automatically and remembered between sessions.
 
 ### Closing it
 
@@ -340,12 +399,19 @@ Settings are saved to `scaler_config.json` in the same folder as the script. You
 
 ## Files included
 
+### Source release (`vrchat_avatar_scaler.zip`)
+
 | File | Purpose |
 |---|---|
 | `vrchat_avatar_scaler.pyw` | The main application. |
 | `Install.bat` | One-click installer — run this first. |
 | `Launch Scaler (Silent).vbs` | Launches the app without a console window. Use this for daily use and shortcuts. |
+| `Cleanup.bat` | Removes leftover startup entries from older versions. |
 | `scaler_config.json` | Created automatically on first run. Stores all settings and your last-used height. Delete to reset to defaults. |
+
+### Compiled release
+
+Pre-built Windows MSI and Linux AppImage are attached to each release. No Python required.
 
 ---
 
@@ -372,9 +438,9 @@ Something else on your PC is already using port 9001. The best fix is to enable 
 - Make sure `pynput` is installed. Run `Install.bat` again to check.
 - If it still does not work, open Command Prompt and run: `pip install --upgrade pynput`
 
-### The height overlay appears when the wrong window is focused
+### "Missing Packages" error even after running Install.bat
 
-This should not occur in the current version, which identifies VRChat by process name rather than window title. If you do experience this, please open an issue on GitHub with details about which application was focused.
+You likely have multiple Python installations (common when Python was installed from both python.org and the Microsoft Store). The error dialog shows the exact Python path being used — copy the command at the bottom of the dialog and run it in Command Prompt to install into the correct Python. Alternatively, re-run `Install.bat`, which now auto-detects and installs into the right interpreter.
 
 ---
 
@@ -392,9 +458,3 @@ VRChat communicates via UDP using the OSC protocol. When OSCQuery is active, por
 
 [Full VRChat OSC documentation](https://docs.vrchat.com/docs/osc-overview)
 
----
-
-## To-Do List
-
-- Integrate SteamVR Input to control avatar height with VR controller inputs.
-- Possibly integrate per-world ID scale saving.
