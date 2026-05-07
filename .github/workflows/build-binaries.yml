@@ -1,5 +1,5 @@
 # .github/workflows/build.yml
-name: Build Nuitka Binaries
+name: Build CX_Freeze Binaries
 
 on:
   release:
@@ -36,13 +36,13 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          pip install -r requirements.txt
+          pip install -r VRChat-Avatar-Scaler/requirements.txt
           pip install cx_Freeze freeze-core
 
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
-          pip install -r requirements.txt
+          pip install -r VRChat-Avatar-Scaler/requirements.txt
           pip install cx_Freeze freeze-core
 
       # --- Rename ---
@@ -61,14 +61,14 @@ jobs:
       - name: Build with CX_Freeze (Linux)
         if: runner.os == 'Linux'
         run: |
-          python setup.py bdinst_appimage \
+          python setup.py bdist_appimage \
             vrchat_avatar_scaler.py
         
       - name: Build with CX_Freeze (Windows)
         if: runner.os == 'Windows'
         shell: cmd
         run: |
-          python setup.py bdinst_msi ^
+          python setup.py bdist_msi ^
             vrchat_avatar_scaler.py
 
       # --- Upload ---
