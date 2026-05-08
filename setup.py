@@ -16,10 +16,7 @@ pystray_path = subprocess.check_output(
 build_options = {
     'packages': [
         'pystray',
-        'pystray._xorg',       # Linux X11
-        'pystray._gtk',        # Linux GTK  
         'pystray._appindicator', # Linux AppIndicator
-        'pystray._win32',      # Windows
         'PIL',
         'pynput',
         'zeroconf',
