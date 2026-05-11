@@ -32,6 +32,7 @@ jobs:
             libdbus-glib-1-2 \
             glib-networking \
             libcairo2 \
+            libcairo2-dev \
             libcairo-gobject2 \
             libpango-1.0-0 \
             libpangocairo-1.0-0 \
