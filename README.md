@@ -38,6 +38,7 @@ It also watches for avatar and world changes and can instantly restore your pref
 - [Files included](#files-included)
 - [Troubleshooting](#troubleshooting)
 - [OSC technical reference](#osc-technical-reference)
+- [To-Do List](#to-do-list)
 
 ---
 
@@ -406,7 +407,6 @@ Settings are saved to `scaler_config.json` in the same folder as the script. You
 | `vrchat_avatar_scaler.pyw` | The main application. |
 | `Install.bat` | One-click installer — run this first. |
 | `Launch Scaler (Silent).vbs` | Launches the app without a console window. Use this for daily use and shortcuts. |
-| `Cleanup.bat` | Removes leftover startup entries from older versions. |
 | `scaler_config.json` | Created automatically on first run. Stores all settings and your last-used height. Delete to reset to defaults. |
 
 ### Compiled release
@@ -458,3 +458,9 @@ VRChat communicates via UDP using the OSC protocol. When OSCQuery is active, por
 
 [Full VRChat OSC documentation](https://docs.vrchat.com/docs/osc-overview)
 
+---
+
+## To-Do List
+
+- Integrate SteamVR Input to control avatar height with VR controller inputs.
+- Possibly integrate per-world ID scale saving.
