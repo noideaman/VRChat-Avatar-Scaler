@@ -1,9 +1,33 @@
 import sys
+import subprocess
 from cx_Freeze import setup, Executable
+
+#force pysystray without a desktop
+pystray_path = subprocess.check_output(
+    [sys.executable, '-c', 
+     'import importlib.util; import os; '
+     'spec = importlib.util.find_spec("pystray"); '
+     'print(os.path.dirname(spec.origin))'],
+    text=True
+).strip()
 
 # Dependencies are automatically detected, but it might need
 # fine tuning.
-build_options = {'packages': [], 'excludes': []}
+build_options = {
+    'packages': [
+        'pystray',
+        'pystray._appindicator', # Linux AppIndicator
+        'PIL',
+        'pynput',
+        'zeroconf',
+        'psutil',
+    ],
+    'include_files': [
+        (pystray_path, 'lib/pystray'),
+    ],
+    'zip_exclude_packages': ['pystray', 'PIL', 'pynput'],
+    'excludes': [],
+}
 
 base = 'gui'
 

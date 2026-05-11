@@ -45,8 +45,37 @@ jobs:
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgirepository1.0-dev \
+            libgirepository-2.0-dev \
+            libglib2.0-dev \
+            libcairo2-dev \
+            libcairo-gobject2 \
+            libffi-dev \
+            libgtk-3-dev \
+            libgdk-pixbuf-2.0-dev \
+            libpango1.0-dev \
+            libatk1.0-dev \
+            libdbus-1-dev \
+            libdbus-glib-1-2 \
+            libayatana-appindicator3-1 \
+            gir1.2-ayatanaappindicator3-0.1 \
+            gir1.2-gtk-3.0 \
+            python3-gi \
+            python3-gi-cairo \
+            glib-networking \
+            libgirepository-2.0-0 \
+            xvfb
           pip install -r requirements.txt
-          pip install cx_Freeze freeze-core
+          pip install cx_Freeze freeze-core PyGObject
+
+      - name: Set up virtual display (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install -y xvfb
+          Xvfb :99 -screen 0 1024x768x24 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
 
       # --- Rename ---
       - name: Rename File so CX_Freeze works (Linux)
@@ -63,6 +92,8 @@ jobs:
       # --- Build ---
       - name: Build with CX_Freeze (Linux)
         if: runner.os == 'Linux'
+        env:
+          DISPLAY: ':99'
         run: |
           python setup.py bdist_appimage
         
