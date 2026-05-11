@@ -26,7 +26,7 @@ jobs:
             gir1.2-ayatanaappindicator3-0.1 \
             libayatana-appindicator3-1 \
             libgirepository1.0-dev \
-            libgirepository-1.0-0 \
+            libgirepository-2.0-0 \
             libglib2.0-0 \
             libdbus-1-3 \
             libdbus-glib-1-2 \
