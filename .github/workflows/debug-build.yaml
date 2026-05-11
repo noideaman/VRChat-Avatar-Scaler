@@ -80,7 +80,7 @@ jobs:
 
       - name: Build AppImage
         env:
-	      DISPLAY: ":99"
+          DISPLAY: ":99"
         run: python setup.py bdist_appimage
 
       - name: Show dist contents and size
